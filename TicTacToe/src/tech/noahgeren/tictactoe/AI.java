@@ -2,8 +2,6 @@ package tech.noahgeren.tictactoe;
 
 public class AI {
 	
-	// TODO: Make this class not static
-	
 	public static int counter = 0;
 	
 	public static int getComputerMove(TicTacToe game) {
