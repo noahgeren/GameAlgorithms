@@ -21,7 +21,7 @@ public class GUI extends JFrame{
 
 	private static final long serialVersionUID = 5984495259547829374L;
 	
-	private JTextField[][] cells = new JTextField[Sudoku.SIZE][Sudoku.SIZE];
+	private JTextField[][] cells = new JTextField[9][9];
 	
 	public GUI(Sudoku puzzle) {
 		super("Sudoku");
@@ -48,9 +48,9 @@ public class GUI extends JFrame{
 				}
 			}
 		};
-		for(int i = 0; i < Sudoku.SIZE; i++) {
+		for(int i = 0; i < 9; i++) {
 			JPanel block = new JPanel(new GridLayout(3, 3));
-			for(int j = 0; j < Sudoku.SIZE; j++) {
+			for(int j = 0; j < 9; j++) {
 				final int x = (i % 3) * 3 + (j % 3), y = (int)(i / 3) * 3 + (j / 3);
 				JTextField input = new JTextField(1);
 				input.setHorizontalAlignment(JTextField.CENTER);
@@ -75,8 +75,8 @@ public class GUI extends JFrame{
 				} catch(Exception ex) {
 					JOptionPane.showMessageDialog(null, "This puzzle is unsolvable.", "Unsolvable", JOptionPane.ERROR_MESSAGE);
 				}
-				for(int x = 0; x < Sudoku.SIZE; x++) {
-					for(int y = 0; y < Sudoku.SIZE; y++) {
+				for(int x = 0; x < 9; x++) {
+					for(int y = 0; y < 9; y++) {
 						cells[x][y].setText(puzzle.getCell(x, y) + "");
 					}
 				}

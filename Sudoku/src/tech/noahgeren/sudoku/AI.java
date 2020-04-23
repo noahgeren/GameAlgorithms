@@ -8,7 +8,7 @@ public class AI {
 	}
 	
 	private static boolean solveCell(Sudoku puzzle, int x, int y) {
-		if(x >= Sudoku.SIZE || y >= Sudoku.SIZE) return true;
+		if(x >= 9 || y >= 9) return true;
 		if(puzzle.getCell(x, y) != null)
 			return solveCell(puzzle, (x + 1) % 9, y + (x / 8));
 		for(int value : puzzle.getAvailableValues(x, y)) {
