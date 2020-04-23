@@ -66,6 +66,28 @@ public class GUI extends JFrame{
 		JPanel buttons = new JPanel();
 		final ActionListener buttonListener = e -> {
 			switch(e.getActionCommand()) {
+			case "lock":
+				for(int x = 0; x < 9; x++) {
+					for(int y = 0; y < 9; y++) {
+						if(!cells[x][y].getText().trim().isEmpty()) {
+							cells[x][y].setEditable(false);
+						}
+					}
+				}
+				JButton unlock = (JButton) e.getSource();
+				unlock.setText("Unlock");
+				unlock.setActionCommand("unlock");
+				break;
+			case "unlock":
+				for(int x = 0; x < 9; x++) {
+					for(int y = 0; y < 9; y++) {
+						cells[x][y].setEditable(true);
+					}
+				}
+				JButton lock = (JButton) e.getSource();
+				lock.setText("Lock");
+				lock.setActionCommand("lock");
+				break;
 			case "check":
 				JOptionPane.showMessageDialog(null, puzzle.checkIfSolved() ? "Great job!" : "Still needs some work.", "Check", JOptionPane.INFORMATION_MESSAGE);
 				break;
@@ -83,12 +105,16 @@ public class GUI extends JFrame{
 				break;
 			}
 		};
+		JButton lock = new JButton("Lock");
+		lock.setActionCommand("lock");
+		lock.addActionListener(buttonListener);
 		JButton check = new JButton("Check");
 		check.setActionCommand("check");
 		check.addActionListener(buttonListener);
 		JButton solve = new JButton("Solve");
 		solve.setActionCommand("solve");
 		solve.addActionListener(buttonListener);
+		buttons.add(lock);
 		buttons.add(check);
 		buttons.add(solve);
 		getContentPane().add(grid, BorderLayout.CENTER);
