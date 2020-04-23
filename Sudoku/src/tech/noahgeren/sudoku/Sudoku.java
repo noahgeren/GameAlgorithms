@@ -16,7 +16,7 @@ public class Sudoku {
 	
 	public boolean checkIfSolved() {
 		for(int n = 0; n < 9; n++) {
-			boolean[][] recorded = new boolean[3][9 + 1];
+			boolean[][] recorded = new boolean[3][10];
 			final int xStart = (n % 3) * 3, yStart = (int)(n / 3) * 3;
 			for(int i = 0; i < 9; i++) {
 				if(cells[i][n] == null || cells[n][i] == null || 
@@ -32,7 +32,7 @@ public class Sudoku {
 	}
 	
 	public int[] getAvailableValues(int x, int y){
-		boolean[] recorded = new boolean[9 + 1];
+		boolean[] recorded = new boolean[10];
 		final int xStart = (int)(x / 3) * 3, yStart = (int)(y / 3) * 3;
 		for(int i = 0; i < 9; i++) {
 			if(cells[x][i] != null) 
@@ -42,7 +42,7 @@ public class Sudoku {
 			if(cells[xStart + (i / 3)][yStart + (i % 3)] != null) 
 				recorded[cells[xStart + (i / 3)][yStart + (i % 3)]] = true;
 		}
-		return IntStream.range(1, 9 + 1)
+		return IntStream.range(1, 10)
 				.filter(i -> !recorded[i])
 				.toArray();
 	}
