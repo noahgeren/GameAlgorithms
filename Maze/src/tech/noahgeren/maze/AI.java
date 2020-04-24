@@ -1,13 +1,11 @@
 package tech.noahgeren.maze;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class AI {
-	
-	// TODO: Improve performance and efficiency
-	
+		
 	private static class Node implements Comparable<Node> {
 		public Node parent;
 		public int x, y;
@@ -31,35 +29,38 @@ public class AI {
 			}
 			return false;
 		}
+		@Override
+		public int hashCode() {
+			return new int[] {x, y}.hashCode();
+		}
 	}
 	
-	public static int[][] findShortestPath(Maze maze) {
-		final List<Node> open = new ArrayList<>();
-		final List<Node> closed = new ArrayList<>();
-		final List<Node> path = new ArrayList<>();
+	public static int[][] findApproxShortestPath(Maze maze) {
+		final PriorityQueue<Node> open = new PriorityQueue<>(100);
+		final HashSet<Node> closed = new HashSet<>(100);
 		Node current = new Node(null, maze.getStart()[0], maze.getStart()[1], 0, 0);
 		closed.add(current);
 		while(current.x != maze.getFinish()[0] || current.y != maze.getFinish()[1]) {
 			addNeighborsToList(current, maze, open, closed);
 			if(open.isEmpty()) return null;
-			current = open.get(0);
-			open.remove(0);
+			current = open.poll();
 			closed.add(current);
 		}
-		path.add(0, current);
+		final Stack<Node> path = new Stack<Node>();
+		path.push(current);
 		while(current.x != maze.getStart()[0] || current.y != maze.getStart()[1]) {
 			current = current.parent;
-            path.add(0, current);
+            path.push(current);
 		}
 		final int[][] pathCoords = new int[path.size()][2];
-		for(int i = 0; i < path.size(); i++) {
-			Node node = path.get(i);
+		for(int i = 0; !path.isEmpty(); i++) {
+			Node node = path.pop();
 			pathCoords[i] = new int[] {node.x, node.y};
 		}
 		return pathCoords;
 	}
 
-	private static void addNeighborsToList(Node current, Maze maze, List<Node> open, List<Node> closed) {
+	private static void addNeighborsToList(Node current, Maze maze, PriorityQueue<Node> open, HashSet<Node> closed) {
 		for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
             	final Node node = new Node(current, 
@@ -68,13 +69,12 @@ public class AI {
             	if(!maze.isWall(node.x, node.y) && !open.contains(node) && !closed.contains(node)) {
             		if(x != 0 && y != 0) {
             			if(maze.isWall(node.x, current.y) && maze.isWall(current.x, node.y)) continue;
-            			node.g += 0.4;
+            			node.g += 0.414;
             		}
-            		open.add(node);
+            		open.offer(node);
             	}
             }
 		}
-		Collections.sort(open);
 	}
 
 	private static double distance(Maze maze, Node current, int x, int y) {
