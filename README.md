@@ -4,3 +4,4 @@
 ## Current Implementations
 1. TicTacToe with minimax and alpha-beta pruning.
 2. Sudoku with backtracking.
+3. Maze solver with A* pathfinding.
