@@ -1,6 +1,7 @@
 package tech.noahgeren.maze;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
@@ -31,7 +32,7 @@ public class AI {
 		}
 		@Override
 		public int hashCode() {
-			return new int[] {x, y}.hashCode();
+			return Objects.hash(x, y);
 		}
 	}
 	
@@ -46,11 +47,11 @@ public class AI {
 			current = open.poll();
 		}
 		final Stack<Node> path = new Stack<Node>();
-		path.push(current);
 		while(current.x != maze.getStart()[0] || current.y != maze.getStart()[1]) {
 			current = current.parent;
             path.push(current);
 		}
+		path.pop();
 		final int[][] pathCoords = new int[path.size()][2];
 		for(int i = 0; !path.isEmpty(); i++) {
 			Node node = path.pop();
