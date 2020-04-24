@@ -7,9 +7,9 @@ import java.util.Stack;
 public class AI {
 		
 	private static class Node implements Comparable<Node> {
-		public Node parent;
-		public int x, y;
-		double h, g;
+		final public Node parent;
+		final public int x, y;
+		final double h, g;
 		Node(Node parent, int x, int y, double g, double h){
 			this.parent = parent;
 			this.x = x;
@@ -39,12 +39,11 @@ public class AI {
 		final PriorityQueue<Node> open = new PriorityQueue<>(100);
 		final HashSet<Node> closed = new HashSet<>(100);
 		Node current = new Node(null, maze.getStart()[0], maze.getStart()[1], 0, 0);
-		closed.add(current);
 		while(current.x != maze.getFinish()[0] || current.y != maze.getFinish()[1]) {
+			closed.add(current);
 			addNeighborsToList(current, maze, open, closed);
 			if(open.isEmpty()) return null;
 			current = open.poll();
-			closed.add(current);
 		}
 		final Stack<Node> path = new Stack<Node>();
 		path.push(current);
@@ -65,12 +64,10 @@ public class AI {
             for (int y = -1; y <= 1; y++) {
             	final Node node = new Node(current, 
             			current.x + x, current.y + y, 
-            			current.g + 1, distance(maze, current, x, y));
+            			current.g + ((x == 0 || y == 0) ? 1 : 1.414), distance(maze, current, x, y));
             	if(!maze.isWall(node.x, node.y) && !open.contains(node) && !closed.contains(node)) {
-            		if(x != 0 && y != 0) {
-            			if(maze.isWall(node.x, current.y) && maze.isWall(current.x, node.y)) continue;
-            			node.g += 0.414;
-            		}
+            		if(x != 0 && y != 0 && 
+            				maze.isWall(node.x, current.y) && maze.isWall(current.x, node.y)) continue;
             		open.offer(node);
             	}
             }
