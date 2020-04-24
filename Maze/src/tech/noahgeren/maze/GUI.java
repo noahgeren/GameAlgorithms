@@ -51,8 +51,13 @@ public class GUI extends JFrame{
 								e.getComponent().setBackground(Color.GREEN);
 								state = GUIState.SOLVE;
 								maze.setFinish(x, y);
-								for(int[] coord : AI.findShortestPath(maze)) {
-									cells[coord[0]][coord[1]].setBackground(Color.RED);
+								int[][] path = AI.findShortestPath(maze);
+								if(path != null) {
+									for(int[] coord : path) {
+										cells[coord[0]][coord[1]].setBackground(Color.RED);
+									}
+								} else {
+									JOptionPane.showMessageDialog(null, "Maze is unsolvable.", "Unsolvable", JOptionPane.ERROR_MESSAGE);
 								}
 								break;
 							default:

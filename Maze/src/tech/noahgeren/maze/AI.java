@@ -1,14 +1,18 @@
 package tech.noahgeren.maze;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AI {
 	
+	// TODO: Improve performance and efficiency
+	
 	private static class Node implements Comparable<Node> {
 		public Node parent;
-		public int x, y, g, h;
-		Node(Node parent, int x, int y, int g, int h){
+		public int x, y;
+		double h, g;
+		Node(Node parent, int x, int y, double g, double h){
 			this.parent = parent;
 			this.x = x;
 			this.y = y;
@@ -17,7 +21,7 @@ public class AI {
 		}
 		@Override
 		public int compareTo(Node o) {
-			return g + h - o.g - o.h;
+			return (int) ((g + h - o.g - o.h) * 100);
 		}
 		@Override
 		public boolean equals(Object o) {
@@ -58,19 +62,23 @@ public class AI {
 	private static void addNeighborsToList(Node current, Maze maze, List<Node> open, List<Node> closed) {
 		for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
-            	if((x != 0 && y != 0)) continue;
             	final Node node = new Node(current, 
             			current.x + x, current.y + y, 
             			current.g + 1, distance(maze, current, x, y));
             	if(!maze.isWall(node.x, node.y) && !open.contains(node) && !closed.contains(node)) {
+            		if(x != 0 && y != 0) {
+            			if(maze.isWall(node.x, current.y) && maze.isWall(current.x, node.y)) continue;
+            			node.g += 0.4;
+            		}
             		open.add(node);
             	}
             }
 		}
+		Collections.sort(open);
 	}
 
-	private static int distance(Maze maze, Node current, int x, int y) {
-		return Math.abs(current.x + x - maze.getFinish()[0]) + Math.abs(current.y + y - maze.getFinish()[1]);
+	private static double distance(Maze maze, Node current, int x, int y) {
+		return Math.hypot(current.x + x - maze.getFinish()[0], current.y + y - maze.getFinish()[1]);
 	}
 
 }
