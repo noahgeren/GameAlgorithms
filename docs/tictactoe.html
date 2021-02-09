@@ -1,0 +1,90 @@
+<!--
+	CSC 540 Project 2: Minimax Tic Tac Toe
+	Author: Noah Geren (Geren0042@live.missouristate.edu)
+	Should work on all modern browsers (not IE).
+	My minimax algorithm uses alpha/beta pruning and depth to efficiently find the optimal solution.
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Tic Tac Toe</title>
+<script>
+board = {};
+const wins = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+const move = (i, x, td) => (board[i] = x) && ((td ?? document.querySelectorAll('td')[i]).textContent = (x - 1) ? 'O' : 'X');
+let isRandom = true;
+function endGame(winner) {
+	winner && window.setTimeout(() => {
+		alert(winner === true ? 'Cat. No one wins.' : `${(winner - 1) ? 'AI' : 'You'} won!`);
+		document.querySelectorAll('td').forEach(td => td.innerHTML = '&nbsp;');
+		board = {};
+	}, 50);
+	return winner;
+}
+function checkTerminalState(board = window.board) {
+	for(const win of wins) {
+		if(board[win[0]] && board[win[0]] === board[win[1]] && board[win[1]] === board[win[2]]) return board[win[0]];
+	}
+	return Object.keys(board).length === 9;
+}
+function random() {
+	const availableMoves = [...Array(9).keys()].filter((_, i) => !board[i]);
+	return move(availableMoves[Math.floor(Math.random() * availableMoves.length)], 2);
+}
+function minimax(board = window.board, isMax = true, alpha = -Infinity, beta = Infinity, depth = 0) {
+	let terminalState = checkTerminalState(board);
+	if(terminalState === 1) return -10 - depth;
+	if(terminalState === 2) return 10 - depth;
+	if(terminalState) return -depth;
+	let minMax = isMax ? -Infinity : Infinity;
+	let bestMove = -1;
+	const availableMoves = [...Array(9).keys()].filter((_, i) => !board[i]);
+	for(const move of availableMoves) {
+		let newBoard = {...board};
+		newBoard[move] = isMax ? 2 : 1;
+		let value = minimax(newBoard, !isMax, alpha, beta, depth + 1);
+		if(isMax && value > minMax || !isMax && value < minMax) [minMax, bestMove] = [value, move];
+		if(isMax) alpha = Math.max(minMax, alpha);
+		else beta = Math.min(minMax, beta);
+		if(alpha >= beta) break;
+	}
+	depth || move(bestMove, 2);
+	return minMax;
+}
+document.addEventListener('DOMContentLoaded', () => {
+	document.getElementById('change-mode').addEventListener('click', () => {
+		document.getElementById('current-mode').textContent = (isRandom ^= true) ? 'Random' : 'Minimax';
+		document.getElementById('next-mode').textContent = isRandom ? 'Minimax' : 'Random';
+	});
+	document.querySelectorAll('td').forEach((td, i) => td.addEventListener('click', 
+		() => !board[i] && move(i, 1, td) && (endGame(checkTerminalState()) || (isRandom ? random : minimax)() && endGame(checkTerminalState()))));
+});
+</script>
+<style>
+body{
+	text-align: center;
+}
+table {
+	width: 300px;
+	height: 300px;
+	table-layout: fixed;
+	margin: auto;
+	font: 50px Arial, sans-serif;
+	border-collapse: collapse;
+}
+td:nth-child(2) {
+	border-left: 2px solid black;
+	border-right: 2px solid black;
+}
+tr:nth-child(2) td {
+	border-top: 2px solid black;
+	border-bottom: 2px solid black;
+}
+</style>
+</head>
+<body>
+<table><tr><td>&nbsp;</td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td></tr></table>
+<h2>Current Mode: <span id="current-mode">Random</span></h2>
+<button id="change-mode">Change to <span id="next-mode">Minimax</span> Mode</button></div>
+</body>
+</html>

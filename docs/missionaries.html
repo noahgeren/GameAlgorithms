@@ -1,0 +1,40 @@
+<!--
+	CSC 540 Project 1: Missionaries and Cannibals
+	Author: Noah Geren
+	Should work on all modern browsers (not IE). 
+	Sorry for the obfuscation, I was going for the least number of lines possible while still being usable.
+	I can explain any part of it if needed.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Missionaries And Cannibals</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<table class="table table-light table-bordered table-striped table-hover">
+		<thead><tr><th>Step</th><th>Boat</th><th>Left</th><th>Right</th><th>Description</th></tr></thead>
+		<tbody id="table-body"></tbody>
+	</table>
+</body>
+<script>
+const actions = [[2, 2, 0], [2, 1, 0], [2, 1, 1], [2, 0, 1], [2, 0, 2]];
+const actionDesc = ['Move 2 missionaries', 'Move 1 missionary', 'Move 1 missionary and 1 cannibal', 'Move 1 cannibal', 'Move 2 cannibals'];
+function addRow(state, depth, desc) {
+	const tr = document.createElement('tr');
+	tr.innerHTML = `<td>${depth}</td><td>${state[0] ? 'Left' : 'Right'}</td><td>${`${state[1]}M ${state[2]}C`}</td>
+		<td>${`${3 - state[1]}M ${3 - state[2]}C`}</td><td>${desc}${depth ? state[0] ? ' left' : ' right': ''}.</td>`;
+	return document.getElementById('table-body').prepend(tr) || true;
+}
+(function search(state = [2, 3, 3], visited = {}, depth = 0, rowDesc = "Starting state") {
+	const stateString = state.toString();
+	return state[1] >= 0 && state[1] <= 3 && state[2] >= 0 && state[2] <= 3
+		&& (state[2] <= state[1] || !state[1])
+		&& (state[1] <= state[2] || state[1] === 3)
+		&& !visited[stateString] && (visited[stateString] = 1)
+		&& ((stateString === '0,0,0' && addRow(state, depth, rowDesc))
+			|| actions.some((action, idx) => search(Array.from(state, (pos, i) => pos - (state[0] - 1) * action[i]), visited, depth + 1, actionDesc[idx]) 
+				&& addRow(state, depth, rowDesc)));
+})();
+</script>
+</html>
